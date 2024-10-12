@@ -1,0 +1,9 @@
+dist
+package
+.DS_Store
+.slack/apps.dev.json
+src/.env
+/.devcontainer/
+/.env
+data/
+node_modules
