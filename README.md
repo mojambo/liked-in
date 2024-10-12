@@ -67,8 +67,8 @@ ENCRYPTION_KEY=your_encryption_key
 
 7. In Slack, use the following commands:
 
-- `/likedin [LinkedIn post URL]` to share a LinkedIn post
 - `/set-linkedin-cookie` to set your LinkedIn authentication cookie: `li_at` retrieved from your browser
+- `/likedin [LinkedIn post URL]` to share a LinkedIn post
 
 ## Project Structure
 
@@ -77,6 +77,17 @@ ENCRYPTION_KEY=your_encryption_key
 - `db.ts`: Database operations
 - `liker.ts`: LinkedIn post liking functionality
 - `logger.ts`: Logging configuration
+
+## Screenshots
+
+<img src="assets/screenshot_set_cookie.png" width="60%" alt="Set linked in cookie">
+
+*Set cookie*
+
+
+<img src="assets/screenshot_liked_in.png" width="60%" alt="LikedIn">
+
+*LikedIn*
 
 ## License
 
