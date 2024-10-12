@@ -10,13 +10,15 @@ import {
   ViewSubmitAction
 } from '@slack/bolt';
 import {clickLikeButton} from "./liker";
-import {getStoredCookie, storeCookie} from "./db";
+import {DatabaseManager} from "./db";
 
-export function setupSlackHandlers(app: App) {
+import logger from './logger';
+
+export function setupSlackHandlers(app: App, dbManager: DatabaseManager) {
   app.command('/likedin', handleLinkedinCommand);
-  app.action<BlockAction>('like_linkedin', handleLikeLinkedinAction);
+  app.action<BlockAction>('like_linkedin', handleLikeLinkedinAction(dbManager));
   app.command('/set-linkedin-cookie', handleSetLinkedinCookieCommand);
-  app.view('cookie_modal', handleCookieModalSubmission);
+  app.view('cookie_modal', handleCookieModalSubmission(dbManager));
 }
 
 const handleLinkedinCommand: Middleware<SlackCommandMiddlewareArgs> = async ({command, ack, respond}) => {
@@ -75,37 +77,38 @@ const handleLinkedinCommand: Middleware<SlackCommandMiddlewareArgs> = async ({co
   }
 }
 
-const handleLikeLinkedinAction: Middleware<SlackActionMiddlewareArgs<BlockAction>> = async ({
-                                                                                              action,
-                                                                                              ack,
-                                                                                              client,
-                                                                                              body
-                                                                                            }) => {
-  await ack();
-  console.log('Like LinkedIn action received:', action);
+const handleLikeLinkedinAction = (dbManager: DatabaseManager): Middleware<SlackActionMiddlewareArgs<BlockAction>> =>
+  async ({action, ack, client, body}) => {
+    await ack();
+    logger.info('Like LinkedIn action received:', action);
 
-  if ('value' in action) {
-    const linkedInUrl = action.value;
-    if (linkedInUrl != undefined) {
-      try {
-        const cookie = await getStoredCookie(body.user.id);
-        if (cookie == null) {
-          throw Error('No cookie found');
+    if ('value' in action) {
+      const linkedInUrl = action.value;
+      if (linkedInUrl != undefined) {
+        try {
+          const cookie = await dbManager.getStoredCookie(body.user.id);
+          if (cookie == null) {
+            throw new Error('No cookie found');
+          }
+          await clickLikeButton(linkedInUrl, cookie);
+          await client.chat.postEphemeral({
+            channel: body.channel!.id,
+            user: body.user.id,
+            text: "You successfully liked this post!"
+          });
+        } catch (e) {
+          logger.error('Error liking post:', e);
+          await client.chat.postEphemeral({
+            channel: body.channel!.id,
+            user: body.user.id,
+            text: "There was an error liking the post. Please try again or check your cookie."
+          });
         }
-        await clickLikeButton(linkedInUrl, cookie);
-        await client.chat.postEphemeral({
-          channel: body.channel!.id,
-          user: body.user.id,
-          text: "You successfully liked this post!"
-        });
-      } catch (e) {
-        console.error(e);
       }
+    } else {
+      logger.error('Action does not contain a value');
     }
-  } else {
-    console.error('Action does not contain a value');
   }
-}
 
 const handleSetLinkedinCookieCommand: Middleware<SlackCommandMiddlewareArgs> = async ({command, ack, client}) => {
   await ack();
@@ -144,34 +147,29 @@ const handleSetLinkedinCookieCommand: Middleware<SlackCommandMiddlewareArgs> = a
   }
 }
 
+const handleCookieModalSubmission = (dbManager: DatabaseManager): Middleware<SlackViewMiddlewareArgs<ViewSubmitAction>> =>
+  async ({ack, body, view, client}) => {
+    await ack();
+    const user_id = body.user.id;
+    const cookie_value = view.state.values.cookie_input.cookie_value.value;
 
-const handleCookieModalSubmission: Middleware<SlackViewMiddlewareArgs<ViewSubmitAction>> = async ({
-                                                                                                    ack,
-                                                                                                    body,
-                                                                                                    view,
-                                                                                                    client
-                                                                                                  }) => {
-  await ack();
-  const user_id = body.user.id;
-  const cookie_value = view.state.values.cookie_input.cookie_value.value;
+    if (cookie_value == null) {
+      logger.error('No cookie input');
+      return;
+    }
 
-  if (cookie_value == null) {
-    console.error('No cookie input');
-    return;
+    try {
+      await dbManager.storeCookie(user_id, cookie_value);
+
+      await client.chat.postMessage({
+        channel: user_id,
+        text: "Your LinkedIn cookie has been successfully stored!"
+      });
+    } catch (error) {
+      logger.error('Error storing cookie:', error);
+      await client.chat.postMessage({
+        channel: user_id,
+        text: "There was an error storing your LinkedIn cookie. Please try again."
+      });
+    }
   }
-
-  try {
-    await storeCookie(user_id, cookie_value);
-
-    await client.chat.postMessage({
-      channel: user_id,
-      text: "Your LinkedIn cookie has been successfully stored!"
-    });
-  } catch (error) {
-    console.error('Error storing cookie:', error);
-    await client.chat.postMessage({
-      channel: user_id,
-      text: "There was an error storing your LinkedIn cookie. Please try again."
-    });
-  }
-}
