@@ -6,7 +6,8 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/app.js",
-    "dev": "tsc -w & nodemon dist/app.js"
+    "dev": "tsc -w & nodemon dist/app.js",
+    "generate-docs": "typedoc --options typedoc.json"
   },
   "keywords": [],
   "author": "",
@@ -15,6 +16,8 @@
     "@types/node": "^22.7.5",
     "@types/sqlite3": "^3.1.11",
     "nodemon": "^3.1.7",
+    "typedoc": "^0.26.9",
+    "typedoc-material-theme": "^1.1.0",
     "typescript": "^5.6.3"
   },
   "dependencies": {

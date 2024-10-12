@@ -1,0 +1,16 @@
+{
+  "entryPointStrategy": "expand",
+  "entryPoints": [
+    "./src"
+  ],
+  "out": "docs",
+  "excludePrivate": true,
+  "excludeProtected": true,
+  "theme": "default",
+  "name": "LikedIn",
+  "readme": "README.md",
+  "plugin": [
+    "typedoc-material-theme"
+  ],
+  "themeColor": "#5b8af5"
+}

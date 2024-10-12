@@ -1,4 +1,12 @@
-// slackHandlers.ts
+/**
+ * Slack Handlers Module
+ *
+ * This module contains all the Slack event handlers for the LinkedIn Post Liker bot.
+ * It includes handlers for Slack commands, interactive actions, and view submissions.
+ * The module sets up the necessary event listeners and defines the logic for each handler.
+ *
+ * @module slackHandlers
+ */
 
 import {
   App,
@@ -14,6 +22,11 @@ import {DatabaseManager} from "./db";
 
 import logger from './logger';
 
+/**
+ * Sets up Slack event handlers for the application.
+ * @param {App} app - The Slack Bolt app instance.
+ * @param {DatabaseManager} dbManager - The database manager instance.
+ */
 export function setupSlackHandlers(app: App, dbManager: DatabaseManager) {
   app.command('/likedin', handleLinkedinCommand);
   app.action<BlockAction>('like_linkedin', handleLikeLinkedinAction(dbManager));
@@ -21,6 +34,11 @@ export function setupSlackHandlers(app: App, dbManager: DatabaseManager) {
   app.view('cookie_modal', handleCookieModalSubmission(dbManager));
 }
 
+/**
+ * Handles the /likedin Slack command.
+ * Validates the provided LinkedIn URL and responds with an interactive message.
+ * @type {Middleware<SlackCommandMiddlewareArgs>}
+ */
 const handleLinkedinCommand: Middleware<SlackCommandMiddlewareArgs> = async ({command, ack, respond}) => {
   await ack();
   const linkedInUrl = command.text.trim();
@@ -77,6 +95,12 @@ const handleLinkedinCommand: Middleware<SlackCommandMiddlewareArgs> = async ({co
   }
 }
 
+/**
+ * Handles the action of liking a LinkedIn post.
+ * Retrieves the user's stored cookie, likes the post, and sends a confirmation message.
+ * @param {DatabaseManager} dbManager - The database manager instance.
+ * @returns {Middleware<SlackActionMiddlewareArgs<BlockAction>>}
+ */
 const handleLikeLinkedinAction = (dbManager: DatabaseManager): Middleware<SlackActionMiddlewareArgs<BlockAction>> =>
   async ({action, ack, client, body}) => {
     await ack();
@@ -110,6 +134,11 @@ const handleLikeLinkedinAction = (dbManager: DatabaseManager): Middleware<SlackA
     }
   }
 
+/**
+ * Handles the /set-linkedin-cookie Slack command.
+ * Opens a modal for the user to input their LinkedIn cookie.
+ * @type {Middleware<SlackCommandMiddlewareArgs>}
+ */
 const handleSetLinkedinCookieCommand: Middleware<SlackCommandMiddlewareArgs> = async ({command, ack, client}) => {
   await ack();
   try {
@@ -147,6 +176,12 @@ const handleSetLinkedinCookieCommand: Middleware<SlackCommandMiddlewareArgs> = a
   }
 }
 
+/**
+ * Handles the submission of the cookie modal.
+ * Stores the provided cookie in the database and sends a confirmation message.
+ * @param {DatabaseManager} dbManager - The database manager instance.
+ * @returns {Middleware<SlackViewMiddlewareArgs<ViewSubmitAction>>}
+ */
 const handleCookieModalSubmission = (dbManager: DatabaseManager): Middleware<SlackViewMiddlewareArgs<ViewSubmitAction>> =>
   async ({ack, body, view, client}) => {
     await ack();
