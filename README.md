@@ -68,7 +68,7 @@ ENCRYPTION_KEY=your_encryption_key
 7. In Slack, use the following commands:
 
 - `/likedin [LinkedIn post URL]` to share a LinkedIn post
-- `/set-linkedin-cookie` to set your LinkedIn authentication cookie
+- `/set-linkedin-cookie` to set your LinkedIn authentication cookie: `li_at` retrieved from your browser
 
 ## Project Structure
 
