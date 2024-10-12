@@ -1,6 +1,13 @@
 # LikedIn
 
-## LinkedIn Post Liker Slack Bot
+## Weekend Project: LinkedIn Post Liker Slack Bot
+
+# DANGER DANGER
+
+My account has been restricted after developing / testing this, since it uses puppeteer and I believe this whole project
+violates LinkedIn's terms of service.
+
+# USE AT YOUR OWN RISK
 
 ## Description
 
