@@ -1,0 +1,11 @@
+pages:
+  stage: deploy
+  script:
+    - pnpm install  # Install dependencies
+    - pnpm run generate-docs  # Generate docs
+    - mv docs public  # Move docs to public directory
+  artifacts:
+    paths:
+      - public
+  only:
+    - main
