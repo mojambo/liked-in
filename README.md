@@ -89,6 +89,12 @@ ENCRYPTION_KEY=your_encryption_key
 
 *LikedIn*
 
+## Todo:
+
+* Research how to puppeteer more stealthily to prevent account restriction
+* Add 'Like Success!' Slack message
+* Replace default app bot avatar
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
