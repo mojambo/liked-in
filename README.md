@@ -78,17 +78,6 @@ ENCRYPTION_KEY=your_encryption_key
 - `liker.ts`: LinkedIn post liking functionality
 - `logger.ts`: Logging configuration
 
-## Screenshots
-
-<img src="assets/screenshot_set_cookie.png" width="60%" alt="Set linked in cookie">
-
-*Set cookie*
-
-
-<img src="assets/screenshot_liked_in.png" width="60%" alt="LikedIn">
-
-*LikedIn*
-
 ## Todo:
 
 * Research how to puppeteer more stealthily to prevent account restriction
